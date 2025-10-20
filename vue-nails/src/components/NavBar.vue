@@ -89,6 +89,22 @@
             </div>
           </router-link>
 
+          <router-link
+            to="/reportes-rotura"
+            class="relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 group/link"
+            :class="navLinkClass('/reportes-rotura')"
+          >
+            <div v-if="isActive('/reportes-rotura')" class="absolute inset-0 bg-gradient-to-r from-red-500/10 to-rose-500/10 dark:from-red-400/20 dark:to-rose-400/20 rounded-xl"></div>
+            <div class="relative flex items-center gap-2">
+              <div class="p-1.5 rounded-lg bg-red-100 dark:bg-red-900/50 group-hover/link:bg-red-200 dark:group-hover/link:bg-red-800/70 transition-colors">
+                <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <span>Reportes Rotura</span>
+            </div>
+          </router-link>
+
           <!-- Divider -->
           <div class="h-8 w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent dark:via-gray-700 mx-2"></div>
 
@@ -189,6 +205,20 @@
               </svg>
             </div>
             <span>Reparaciones</span>
+          </router-link>
+
+          <router-link
+            to="/reportes-rotura"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300"
+            :class="mobileLinkClass('/reportes-rotura')"
+            @click="mobileOpen = false"
+          >
+            <div class="p-2 rounded-lg bg-red-100 dark:bg-red-900/50">
+              <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <span>Reportes Rotura</span>
           </router-link>
 
           <!-- Dark mode toggle for mobile -->

@@ -3,6 +3,7 @@ import DashboardReparaciones from '../views/DashboardReparaciones.vue';
 import Usuarios from '../views/Usuarios.vue';
 import Celulares from '../views/Celulares.vue';
 import Regiones from '../views/Regiones.vue';
+import ReportesRotura from '../views/ReportesRotura.vue';
 
 const routes = [
   {
@@ -28,6 +29,11 @@ const routes = [
     path: '/regiones',
     name: 'Regiones',
     component: Regiones
+  },
+  {
+    path: '/reportes-rotura',
+    name: 'ReportesRotura',
+    component: ReportesRotura
   }
 ];
 
