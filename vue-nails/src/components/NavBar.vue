@@ -101,7 +101,23 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <span>Reportes Rotura</span>
+              <span>Reportes</span>
+            </div>
+          </router-link>
+
+          <router-link
+            to="/lineas"
+            class="relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 group/link"
+            :class="navLinkClass('/lineas')"
+          >
+            <div v-if="isActive('/lineas')" class="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 dark:from-teal-400/20 dark:to-cyan-400/20 rounded-xl"></div>
+            <div class="relative flex items-center gap-2">
+              <div class="p-1.5 rounded-lg bg-teal-100 dark:bg-teal-900/50 group-hover/link:bg-teal-200 dark:group-hover/link:bg-teal-800/70 transition-colors">
+                <svg class="w-4 h-4 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <span>Líneas</span>
             </div>
           </router-link>
 
@@ -219,6 +235,20 @@
               </svg>
             </div>
             <span>Reportes Rotura</span>
+          </router-link>
+
+          <router-link
+            to="/lineas"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300"
+            :class="mobileLinkClass('/lineas')"
+            @click="mobileOpen = false"
+          >
+            <div class="p-2 rounded-lg bg-teal-100 dark:bg-teal-900/50">
+              <svg class="w-5 h-5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            </div>
+            <span>Líneas</span>
           </router-link>
 
           <!-- Dark mode toggle for mobile -->
