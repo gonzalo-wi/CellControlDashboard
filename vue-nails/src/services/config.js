@@ -3,7 +3,7 @@
 
 export const API_HOST = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_HOST)
   ? import.meta.env.VITE_API_HOST
-  : 'http://192.168.0.55:8082';
+  : 'http://192.168.0.250:8094';
 
 export function joinUrl(base, path) {
   const b = base.replace(/\/$/, '');

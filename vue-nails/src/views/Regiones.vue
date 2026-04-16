@@ -108,7 +108,7 @@
                   <p class="text-xs text-gray-600 mt-1">Usuarios</p>
                 </div>
                 <div class="text-center p-3 bg-red-50 rounded-lg">
-                  <p class="text-2xl font-bold text-red-600">{{ region.totalCelularesRotos || 0 }}</p>
+                  <p class="text-2xl font-bold text-red-600">{{ calcularRotosRegion(region) }}</p>
                   <p class="text-xs text-gray-600 mt-1">Rotos</p>
                 </div>
                 <div class="text-center p-3 bg-green-50 rounded-lg">
@@ -262,9 +262,14 @@ const calcularTotalUsuarios = () => {
   return todasRegiones.value.reduce((sum, r) => sum + (r.totalUsuarios || 0), 0);
 };
 
+const calcularRotosRegion = (region) => {
+  if (!region.celularesRotosPorUsuario) return 0;
+  return Object.values(region.celularesRotosPorUsuario).reduce((sum, v) => sum + (v || 0), 0);
+};
+
 const calcularTotalRotos = () => {
   if (!todasRegiones.value) return 0;
-  return todasRegiones.value.reduce((sum, r) => sum + (r.totalCelularesRotos || 0), 0);
+  return todasRegiones.value.reduce((sum, r) => sum + calcularRotosRegion(r), 0);
 };
 
 const calcularTotalSolicitudes = () => {
@@ -313,7 +318,7 @@ const exportarExcel = () => {
   const regiones = (regionesConDatos.value || []).map(r => ({
     Region: formatearRegion(r.region),
     Usuarios: r.totalUsuarios || 0,
-    CelularesRotos: r.totalCelularesRotos || 0,
+    CelularesRotos: calcularRotosRegion(r),
     Solicitudes: r.totalSolicitudes || 0,
     PromedioRoturasUsuario: r.promedioCelularesRotos || 0,
   }));

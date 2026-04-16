@@ -2,64 +2,130 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Estilos personalizados adicionales */
 @layer base {
   body {
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.011em;
   }
 
   #app {
     min-height: 100vh;
   }
+
+  /* Better default typography */
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Smooth number rendering */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 @layer components {
   /* Stagger animations for cards */
-  .stagger-1 {
-    animation-delay: 0.05s;
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.1s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.2s; }
+  .stagger-5 { animation-delay: 0.25s; }
+  .stagger-6 { animation-delay: 0.3s; }
+
+  /* Professional card styles */
+  .card {
+    @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/60 dark:border-gray-800/60 shadow-sm;
   }
-  .stagger-2 {
-    animation-delay: 0.1s;
+
+  .card-elevated {
+    @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/60 dark:border-gray-800/60 shadow-md hover:shadow-lg transition-shadow duration-300;
   }
-  .stagger-3 {
-    animation-delay: 0.15s;
+
+  /* Gradient KPI card base */
+  .kpi-card {
+    @apply rounded-2xl p-6 text-white shadow-lg relative overflow-hidden;
   }
-  .stagger-4 {
-    animation-delay: 0.2s;
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+    pointer-events: none;
   }
-  .stagger-5 {
-    animation-delay: 0.25s;
+
+  /* Professional button base */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
-  .stagger-6 {
-    animation-delay: 0.3s;
+  .btn-primary {
+    @apply btn bg-brand-600 text-white hover:bg-brand-700 focus:ring-brand-500 shadow-sm hover:shadow-md;
+  }
+  .btn-success {
+    @apply btn bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500 shadow-sm hover:shadow-md;
+  }
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm hover:shadow-md;
+  }
+
+  /* Professional table */
+  .table-pro {
+    @apply min-w-full divide-y divide-gray-200 dark:divide-gray-800;
+  }
+  .table-pro thead {
+    @apply bg-gray-50/80 dark:bg-gray-800/50;
+  }
+  .table-pro th {
+    @apply px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider;
+  }
+  .table-pro tbody {
+    @apply divide-y divide-gray-100 dark:divide-gray-800/50;
+  }
+  .table-pro tbody tr {
+    @apply hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors;
+  }
+  .table-pro td {
+    @apply px-6 py-4 text-sm;
+  }
+
+  /* Professional input */
+  .input-pro {
+    @apply w-full px-4 py-2.5 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-200;
+  }
+  .select-pro {
+    @apply px-4 py-2.5 bg-white dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all duration-200;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold;
+  }
+
+  /* Page header */
+  .page-header {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50;
   }
 }
 
 @layer utilities {
-  /* Enhanced shadows */
   .shadow-elevate {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
-  
   .shadow-elevate-lg {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
-  
   .shadow-card {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   }
-  
-  /* Smooth focus */
   *:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
   }
-  
   *:focus-visible {
-    outline: 2px solid rgb(59 130 246);
+    outline: 2px solid rgb(99 102 241);
     outline-offset: 2px;
   }
 }

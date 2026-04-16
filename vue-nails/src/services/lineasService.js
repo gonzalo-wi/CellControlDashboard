@@ -36,6 +36,20 @@ export default {
   },
 
   /**
+   * Obtener todos los movimientos
+   */
+  obtenerMovimientos() {
+    return apiClient.get('/api/movimientos');
+  },
+
+  /**
+   * Obtener todas las solicitudes
+   */
+  obtenerSolicitudes() {
+    return apiClient.get('/api/solicitudes');
+  },
+
+  /**
    * Configurar autenticación Basic
    */
   setBasicAuth(username, password) {

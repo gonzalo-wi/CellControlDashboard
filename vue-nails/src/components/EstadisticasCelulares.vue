@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Resumen de Celulares -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-4 text-white shadow-lg">
         <div class="flex items-center justify-between">
           <div>
@@ -23,19 +23,6 @@
           </div>
           <svg class="w-12 h-12 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg p-4 text-white shadow-lg">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm opacity-90">En Uso</p>
-            <p class="text-3xl font-bold mt-1">{{ stats.enUso }}</p>
-            <p class="text-xs opacity-80 mt-1">{{ ((stats.enUso / stats.total) * 100).toFixed(1) }}%</p>
-          </div>
-          <svg class="w-12 h-12 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
           </svg>
         </div>
       </div>

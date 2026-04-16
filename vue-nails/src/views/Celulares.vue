@@ -1,21 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
+  <div class="min-h-screen bg-gray-50/50 dark:bg-gray-950">
     <!-- Header -->
-  <header class="bg-white shadow-sm dark:bg-gray-900">
+    <header class="page-header">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Gestión de Celulares</h1>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Inventario y estadísticas de dispositivos</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Celulares</h1>
+            <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Inventario y estadísticas de dispositivos</p>
           </div>
           <div class="flex items-center gap-2">
             <button 
               @click="cargarDatos"
               :disabled="loading"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+              class="btn-primary"
             >
               <svg 
-                class="w-5 h-5" 
+                class="w-4 h-4" 
                 :class="{ 'animate-spin': loading }"
                 fill="none" 
                 stroke="currentColor" 
@@ -28,12 +28,12 @@
             <button 
               @click="exportarExcel"
               :disabled="!celulares || celulares.length === 0"
-              class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+              class="btn-success"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M7 10l5 5m0 0l5-5m-5 5V4" />
               </svg>
-              Exportar Excel
+              Exportar
             </button>
           </div>
         </div>
@@ -42,16 +42,14 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Error Message -->
-  <div v-if="error" class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded dark:bg-red-900/30 dark:border-red-700">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+      <div v-if="error" class="mb-6 card border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 p-4">
+        <div class="flex items-center gap-3">
+          <div class="flex-shrink-0 w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+            <svg class="h-4 w-4 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <div class="ml-3">
-            <p class="text-sm text-red-700 dark:text-red-200">{{ error }}</p>
-          </div>
+          <p class="text-sm font-medium text-red-700 dark:text-red-300">{{ error }}</p>
         </div>
       </div>
 

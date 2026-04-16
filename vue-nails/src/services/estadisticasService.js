@@ -103,6 +103,13 @@ export default {
   },
 
   /**
+   * Obtener estadísticas generales (dispositivos, usuarios, asignados)
+   */
+  obtenerEstadisticasGenerales() {
+    return apiClient.get('/generales');
+  },
+
+  /**
    * Obtener estadísticas totales generales
    */
   obtenerEstadisticasTotales() {

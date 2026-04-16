@@ -1,24 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
+  <div class="min-h-screen bg-gray-50/50 dark:bg-gray-950">
     <!-- Header -->
-  <header class="bg-white shadow-sm dark:bg-gray-900">
+    <header class="page-header">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard de Gestión de Celulares</h1>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
-              Control de Gestión
-            </p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Dashboard</h1>
+            <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Resumen general de gestión de celulares</p>
           </div>
-          <div class="flex items-center gap-4">
-            <!-- Botón de Actualizar -->
+          <div class="flex items-center gap-2">
             <button 
               @click="cargarDatos"
               :disabled="loading"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+              class="btn-primary"
             >
               <svg 
-                class="w-5 h-5" 
+                class="w-4 h-4" 
                 :class="{ 'animate-spin': loading }"
                 fill="none" 
                 stroke="currentColor" 
@@ -31,12 +28,12 @@
             <button 
               @click="exportarExcel"
               :disabled="!estadisticasTotales && (!todasRegiones || todasRegiones.length === 0)"
-              class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+              class="btn-success"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M7 10l5 5m0 0l5-5m-5 5V4" />
               </svg>
-              Exportar Excel
+              Exportar
             </button>
           </div>
         </div>
@@ -46,42 +43,40 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Error Message -->
-  <div v-if="error" class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded dark:bg-red-900/30 dark:border-red-700">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+      <div v-if="error" class="mb-6 card border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 p-4">
+        <div class="flex items-center gap-3">
+          <div class="flex-shrink-0 w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+            <svg class="h-4 w-4 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <div class="ml-3">
-            <p class="text-sm text-red-700 dark:text-red-200">{{ error }}</p>
-          </div>
+          <p class="text-sm font-medium text-red-700 dark:text-red-300">{{ error }}</p>
         </div>
       </div>
 
       <!-- Filtros de Fecha -->
-  <div class="mb-6 bg-white p-4 rounded-lg shadow-md dark:bg-gray-900">
+      <div class="mb-6 card p-5">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Fecha Desde</label>
+            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Fecha Desde</label>
             <input 
               type="date" 
               v-model="fechaDesde"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+              class="input-pro"
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Fecha Hasta</label>
+            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Fecha Hasta</label>
             <input 
               type="date" 
               v-model="fechaHasta"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+              class="input-pro"
             />
           </div>
           <div class="flex items-end">
             <button 
               @click="aplicarFiltros"
-              class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+              class="btn-primary w-full"
             >
               Aplicar Filtros
             </button>
@@ -89,50 +84,50 @@
         </div>
       </div>
 
-      <!-- Estadísticas Totales -->
-      <div v-if="!loading && estadisticasTotales" class="mb-8">
+      <!-- Estadísticas Generales -->
+      <div v-if="!loading && estadisticasGenerales" class="mb-8">
   <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-3">
           <span class="w-1 h-8 bg-gradient-to-b from-brand-500 to-brand-700 rounded-full"></span>
           Estadísticas Generales
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard 
-            title="Total Celulares"
-            :value="estadisticasTotales.totalCelulares || 0"
+            title="Total Dispositivos"
+            :value="estadisticasGenerales.totalDispositivos || 0"
             icon="phone"
             color="blue"
             subtitle="En el sistema"
             class="stagger-1"
           />
           <StatsCard 
-            title="Celulares Activos"
-            :value="estadisticasTotales.celularesActivos || 0"
+            title="Dispositivos Asignados"
+            :value="estadisticasGenerales.totalAsignados || 0"
             icon="check"
             color="green"
-            subtitle="En operación"
+            subtitle="Asignados a usuarios"
             class="stagger-2"
           />
           <StatsCard 
-            title="Celulares Inactivos"
-            :value="estadisticasTotales.celularesInactivos || 0"
-            icon="alert"
-            color="red"
-            subtitle="Fuera de servicio"
+            title="Total Usuarios"
+            :value="estadisticasGenerales.totalUsuarios || 0"
+            icon="users"
+            color="purple"
+            subtitle="Registrados"
             class="stagger-3"
           />
           <StatsCard 
-            title="Total Regiones"
-            :value="estadisticasTotales.totalRegiones || 0"
-            icon="building"
-            color="purple"
-            subtitle="Cobertura nacional"
+            title="Total Movimientos"
+            :value="estadisticasGenerales.totalMovimientos || 0"
+            icon="chart"
+            color="red"
+            subtitle="Registrados"
             class="stagger-4"
           />
         </div>
       </div>
-      
-      <!-- Skeleton loading -->
-      <div v-if="loading && !estadisticasTotales" class="mb-8">
+
+      <!-- Skeleton loading generales -->
+      <div v-if="loading && !estadisticasGenerales" class="mb-8">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-3">
           <span class="w-1 h-8 bg-gradient-to-b from-brand-500 to-brand-700 rounded-full"></span>
           Estadísticas Generales
@@ -140,15 +135,66 @@
         <SkeletonCards :count="4" />
       </div>
 
+      <!-- Estadísticas Totales -->
+      <div v-if="!loading && estadisticasTotales" class="mb-8">
+  <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-3">
+          <span class="w-1 h-8 bg-gradient-to-b from-brand-500 to-brand-700 rounded-full"></span>
+          Actividad
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatsCard 
+            title="Total Movimientos"
+            :value="estadisticasTotales.totalMovimientos || 0"
+            icon="phone"
+            color="blue"
+            subtitle="Registrados"
+            class="stagger-1"
+          />
+          <StatsCard 
+            title="Total Solicitudes"
+            :value="estadisticasTotales.totalSolicitudes || 0"
+            icon="chart"
+            color="green"
+            subtitle="Registradas"
+            class="stagger-2"
+          />
+          <StatsCard 
+            title="Movimientos Mes Actual"
+            :value="estadisticasTotales.movimientosMesActual || 0"
+            icon="clock"
+            color="purple"
+            subtitle="Este mes"
+            class="stagger-3"
+          />
+          <StatsCard 
+            title="Solicitudes Mes Actual"
+            :value="estadisticasTotales.solicitudesMesActual || 0"
+            icon="alert"
+            color="red"
+            subtitle="Este mes"
+            class="stagger-4"
+          />
+        </div>
+      </div>
+      
+      <!-- Skeleton loading actividad -->
+      <div v-if="loading && !estadisticasTotales" class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-3">
+          <span class="w-1 h-8 bg-gradient-to-b from-brand-500 to-brand-700 rounded-full"></span>
+          Actividad
+        </h2>
+        <SkeletonCards :count="4" />
+      </div>
+
       <!-- Estadísticas Detalladas de Celulares -->
       <div v-if="todosCelulares && todosCelulares.length > 0" class="mb-8">
-  <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Análisis de Celulares</h2>
+  <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 tracking-tight">Análisis de Celulares</h2>
         <EstadisticasCelulares :celulares="todosCelulares" />
       </div>
 
       <!-- Estadísticas de Celulares Rotos -->
       <div v-if="todasRegiones && todasRegiones.length > 0" class="mb-8">
-  <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Resumen de Roturas</h2>
+  <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 tracking-tight">Resumen de Roturas</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard 
             title="Total Usuarios"
@@ -183,7 +229,7 @@
 
       <!-- Estadísticas por Región -->
       <div v-if="todasRegiones && todasRegiones.length > 0" class="mb-8">
-  <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Estadísticas por Región</h2>
+  <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 tracking-tight">Estadísticas por Región</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <CardContainer 
             v-for="region in regionesConDatos" 
@@ -199,7 +245,7 @@
                   <p class="text-xs text-gray-600 mt-1 dark:text-gray-300">Usuarios</p>
                 </div>
                 <div class="text-center p-3 bg-red-50 rounded-lg dark:bg-red-900/20">
-                  <p class="text-2xl font-bold text-red-600 dark:text-red-300">{{ region.totalCelularesRotos || 0 }}</p>
+                  <p class="text-2xl font-bold text-red-600 dark:text-red-300">{{ calcularRotosRegion(region) }}</p>
                   <p class="text-xs text-gray-600 mt-1 dark:text-gray-300">Rotos</p>
                 </div>
                 <div class="text-center p-3 bg-green-50 rounded-lg dark:bg-green-900/20">
@@ -300,6 +346,7 @@ const fechaDesde = ref('');
 const fechaHasta = ref('');
 
 // Datos
+const estadisticasGenerales = ref(null);
 const estadisticasTotales = ref(null);
 const todasRegiones = ref([]);
 const todosCelulares = ref([]);
@@ -385,9 +432,14 @@ const calcularTotalUsuarios = () => {
   return todasRegiones.value.reduce((sum, r) => sum + (r.totalUsuarios || 0), 0);
 };
 
+const calcularRotosRegion = (region) => {
+  if (!region.celularesRotosPorUsuario) return 0;
+  return Object.values(region.celularesRotosPorUsuario).reduce((sum, v) => sum + (v || 0), 0);
+};
+
 const calcularTotalRotos = () => {
   if (!todasRegiones.value) return 0;
-  return todasRegiones.value.reduce((sum, r) => sum + (r.totalCelularesRotos || 0), 0);
+  return todasRegiones.value.reduce((sum, r) => sum + calcularRotosRegion(r), 0);
 };
 
 const calcularTotalSolicitudes = () => {
@@ -412,6 +464,10 @@ const cargarDatos = async () => {
     const username = localStorage.getItem('auth_username') || 'admin';
     const password = localStorage.getItem('auth_password') || 'admin123';
     estadisticasService.setBasicAuth(username, password);
+
+    // Cargar estadísticas generales
+    const responseGenerales = await estadisticasService.obtenerEstadisticasGenerales();
+    estadisticasGenerales.value = responseGenerales.data;
 
     // Cargar estadísticas totales
     const responseTotales = await estadisticasService.obtenerEstadisticasTotales();
@@ -490,17 +546,20 @@ onMounted(() => {
 
 // Export to Excel (resumen + por región)
 const exportarExcel = () => {
-  const resumen = estadisticasTotales.value ? [{
-    TotalCelulares: estadisticasTotales.value.totalCelulares || 0,
-    CelularesActivos: estadisticasTotales.value.celularesActivos || 0,
-    CelularesInactivos: estadisticasTotales.value.celularesInactivos || 0,
-    TotalRegiones: estadisticasTotales.value.totalRegiones || 0,
+  const resumen = estadisticasGenerales.value ? [{
+    TotalDispositivos: estadisticasGenerales.value.totalDispositivos || 0,
+    TotalAsignados: estadisticasGenerales.value.totalAsignados || 0,
+    TotalUsuarios: estadisticasGenerales.value.totalUsuarios || 0,
+    TotalMovimientos: estadisticasTotales.value?.totalMovimientos || 0,
+    TotalSolicitudes: estadisticasTotales.value?.totalSolicitudes || 0,
+    MovimientosMesActual: estadisticasTotales.value?.movimientosMesActual || 0,
+    SolicitudesMesActual: estadisticasTotales.value?.solicitudesMesActual || 0,
   }] : [];
 
   const regiones = (todasRegiones.value || []).map(r => ({
     Region: formatearRegion(r.region),
     Usuarios: r.totalUsuarios || 0,
-    CelularesRotos: r.totalCelularesRotos || 0,
+    CelularesRotos: calcularRotosRegion(r),
     Solicitudes: r.totalSolicitudes || 0,
     PromedioRoturasUsuario: r.promedioCelularesRotos || 0,
   }));

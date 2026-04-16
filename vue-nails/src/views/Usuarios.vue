@@ -1,21 +1,21 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
+  <div class="min-h-screen bg-gray-50/50 dark:bg-gray-950">
     <!-- Header -->
-  <header class="bg-white shadow-sm dark:bg-gray-900">
+    <header class="page-header">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Gestión de Usuarios</h1>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Roturas y rotaciones por usuario</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Usuarios</h1>
+            <p class="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Roturas y rotaciones por usuario</p>
           </div>
           <div class="flex items-center gap-2">
             <button 
               @click="cargarDatos"
               :disabled="loading"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+              class="btn-primary"
             >
               <svg 
-                class="w-5 h-5" 
+                class="w-4 h-4" 
                 :class="{ 'animate-spin': loading }"
                 fill="none" 
                 stroke="currentColor" 
@@ -28,12 +28,12 @@
             <button 
               @click="exportarExcel"
               :disabled="usuariosConRoturas.length === 0"
-              class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+              class="btn-success"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M7 10l5 5m0 0l5-5m-5 5V4" />
               </svg>
-              Exportar Excel
+              Exportar
             </button>
           </div>
         </div>
@@ -42,26 +42,24 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Error Message -->
-  <div v-if="error" class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded dark:bg-red-900/30 dark:border-red-700">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+      <div v-if="error" class="mb-6 card border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/20 p-4">
+        <div class="flex items-center gap-3">
+          <div class="flex-shrink-0 w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+            <svg class="h-4 w-4 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <div class="ml-3">
-            <p class="text-sm text-red-700 dark:text-red-200">{{ error }}</p>
-          </div>
+          <p class="text-sm font-medium text-red-700 dark:text-red-300">{{ error }}</p>
         </div>
       </div>
 
       <!-- Resumen General -->
-      <div v-if="todasRegiones && todasRegiones.length > 0" class="mb-8">
+      <div v-if="usuarios.length > 0" class="mb-8">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Resumen General</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard 
             title="Total Usuarios"
-            :value="todosUsuariosRotos.length"
+            :value="usuarios.length"
             icon="users"
             color="blue"
             subtitle="En el sistema"
@@ -90,10 +88,35 @@
         </div>
       </div>
 
+      <!-- Filtros -->
+      <div v-if="usuarios.length > 0" class="mb-6">
+        <div class="card p-4">
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Región:</label>
+            <select 
+              v-model="regionFiltro"
+              class="select-pro"
+            >
+              <option value="">Todas</option>
+              <option v-for="r in regionesDisponibles" :key="r" :value="r">{{ formatearRegion(r) }}</option>
+            </select>
+            <input 
+              v-model="busqueda"
+              type="text"
+              placeholder="Buscar usuario..."
+              class="input-pro flex-1 min-w-[200px]"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- Top Usuarios con más roturas -->
-      <div v-if="usuariosConRoturas.length > 0" class="mb-8">
-        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Top Usuarios con Más Roturas</h2>
-        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden dark:bg-gray-900 border border-gray-100 dark:border-gray-800">
+      <div v-if="usuariosFiltrados.length > 0" class="mb-8">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          Usuarios con Roturas
+          <span class="text-sm font-normal text-gray-500 dark:text-gray-400">({{ usuariosFiltrados.length }})</span>
+        </h2>
+        <div class="card overflow-hidden">
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
               <thead class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 sticky top-0 z-10 backdrop-blur-sm">
@@ -107,6 +130,12 @@
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Región
                   </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Zona
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    Celular
+                  </th>
                   <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Roturas
                   </th>
@@ -117,44 +146,112 @@
               </thead>
               <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-800">
                 <tr 
-                  v-for="(usuario, index) in top20Usuarios" 
+                  v-for="(usuario, index) in usuariosPaginados" 
                   :key="index"
                   class="hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all duration-150 cursor-pointer hover:shadow-sm"
-                  :class="index < 3 ? 'bg-gradient-to-r from-yellow-50/30 to-transparent dark:from-yellow-900/10' : ''"
+                  :class="globalIndex(index) < 3 ? 'bg-gradient-to-r from-yellow-50/30 to-transparent dark:from-yellow-900/10' : ''"
                 >
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                     <span 
                       class="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs transition-all"
-                      :class="index < 3 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'"
+                      :class="globalIndex(index) < 3 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'"
                     >
-                      {{ index + 1 }}
+                      {{ globalIndex(index) + 1 }}
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ usuario.nombre }}</div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ usuario.numReparto }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ usuario.cargo }}</div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-600 dark:text-gray-300">{{ formatearRegion(usuario.region) }}</div>
                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-600 dark:text-gray-300">{{ usuario.zona }}</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ usuario.marcaCelular }} {{ usuario.modeloCelular }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Serie: {{ usuario.numeroSerieCelular }}</div>
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <span 
                       class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full"
-                      :class="getRoturasClass(usuario.roturas)"
+                      :class="getRoturasClass(usuario.cantCelularesRotos)"
                     >
-                      {{ usuario.roturas }}
+                      {{ usuario.cantCelularesRotos }}
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-center">
                     <span 
                       class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
-                      :class="getNivelClass(usuario.roturas)"
+                      :class="getNivelClass(usuario.cantCelularesRotos)"
                     >
-                      {{ getNivel(usuario.roturas) }}
+                      {{ getNivel(usuario.cantCelularesRotos) }}
                     </span>
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Paginación -->
+        <div v-if="totalPaginas > 1" class="bg-gray-50 dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6">
+          <div class="flex-1 flex justify-between sm:hidden">
+            <button
+              @click="paginaActual--"
+              :disabled="paginaActual === 1"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              Anterior
+            </button>
+            <button
+              @click="paginaActual++"
+              :disabled="paginaActual === totalPaginas"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              Siguiente
+            </button>
+          </div>
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700 dark:text-gray-300">
+                Mostrando
+                <span class="font-medium">{{ (paginaActual - 1) * itemsPorPagina + 1 }}</span>
+                a
+                <span class="font-medium">{{ Math.min(paginaActual * itemsPorPagina, usuariosFiltrados.length) }}</span>
+                de
+                <span class="font-medium">{{ usuariosFiltrados.length }}</span>
+                usuarios
+              </p>
+            </div>
+            <div>
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button
+                  @click="paginaActual--"
+                  :disabled="paginaActual === 1"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
+                >
+                  <span class="sr-only">Anterior</span>
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Página {{ paginaActual }} de {{ totalPaginas }}
+                </span>
+                <button
+                  @click="paginaActual++"
+                  :disabled="paginaActual === totalPaginas"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
+                >
+                  <span class="sr-only">Siguiente</span>
+                  <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -175,12 +272,12 @@
                 :key="index"
                 class="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700"
               >
-                <span class="text-sm text-gray-700 truncate flex-1 dark:text-gray-300">{{ usuario.nombre }}</span>
+                <span class="text-sm text-gray-700 truncate flex-1 dark:text-gray-300">{{ usuario.numReparto }}</span>
                 <span 
                   class="ml-2 px-2 py-1 text-xs font-bold rounded-full"
-                  :class="getRoturasBadgeClass(usuario.roturas)"
+                  :class="getRoturasBadgeClass(usuario.cantCelularesRotos)"
                 >
-                  {{ usuario.roturas }}
+                  {{ usuario.cantCelularesRotos }}
                 </span>
               </div>
               <div 
@@ -203,7 +300,7 @@
           <div 
             v-for="rango in distribucionRoturas" 
             :key="rango.label"
-            class="bg-white rounded-lg shadow-sm p-6 dark:bg-gray-900"
+            class="card p-6"
           >
             <div class="flex items-center justify-between">
               <div>
@@ -223,22 +320,30 @@
       </div>
 
       <!-- Loading State -->
-      <LoadingSpinner v-if="loading && !todasRegiones" label="Cargando datos..." />
+      <LoadingSpinner v-if="loading && usuarios.length === 0" label="Cargando datos..." />
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import StatsCard from '../components/StatsCard.vue';
 import CardContainer from '../components/CardContainer.vue';
-import estadisticasService from '../services/estadisticasService';
+import lineasService from '../services/lineasService';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 import { exportToExcel } from '../utils/exportExcel';
 
 const loading = ref(false);
 const error = ref(null);
-const todasRegiones = ref([]);
+const usuarios = ref([]);
+const regionFiltro = ref('');
+const busqueda = ref('');
+const paginaActual = ref(1);
+const itemsPorPagina = 20;
+
+watch([regionFiltro, busqueda], () => {
+  paginaActual.value = 1;
+});
 
 // Formatear nombre de región
 const formatearRegion = (region) => {
@@ -249,47 +354,60 @@ const formatearRegion = (region) => {
     .join(' ');
 };
 
-// Obtener todos los usuarios con roturas de todas las regiones
-const todosUsuariosRotos = computed(() => {
-  if (!todasRegiones.value) return [];
-  
-  const usuarios = [];
-  todasRegiones.value.forEach(region => {
-    if (region.celularesRotosPorUsuario) {
-      Object.entries(region.celularesRotosPorUsuario).forEach(([nombre, roturas]) => {
-        usuarios.push({
-          nombre,
-          roturas,
-          region: region.region
-        });
-      });
-    }
-  });
-  
-  return usuarios;
+// Regiones disponibles
+const regionesDisponibles = computed(() => {
+  const regiones = new Set(usuarios.value.map(u => u.region).filter(Boolean));
+  return [...regiones].sort();
 });
 
 // Filtrar usuarios con roturas > 0
 const usuariosConRoturas = computed(() => {
-  return todosUsuariosRotos.value.filter(u => u.roturas > 0);
+  return usuarios.value.filter(u => u.cantCelularesRotos > 0);
 });
 
-// Top 20 usuarios con más roturas
-const top20Usuarios = computed(() => {
-  return [...usuariosConRoturas.value]
-    .sort((a, b) => b.roturas - a.roturas)
-    .slice(0, 20);
+// Usuarios filtrados y ordenados
+const usuariosFiltrados = computed(() => {
+  let filtrados = [...usuariosConRoturas.value];
+  
+  if (regionFiltro.value) {
+    filtrados = filtrados.filter(u => u.region === regionFiltro.value);
+  }
+  
+  if (busqueda.value) {
+    const q = busqueda.value.toLowerCase();
+    filtrados = filtrados.filter(u => 
+      (u.numReparto && u.numReparto.toLowerCase().includes(q)) ||
+      (u.zona && u.zona.toLowerCase().includes(q)) ||
+      (u.region && u.region.toLowerCase().includes(q))
+    );
+  }
+  
+  return filtrados.sort((a, b) => b.cantCelularesRotos - a.cantCelularesRotos);
 });
+
+// Paginación
+const totalPaginas = computed(() => 
+  Math.ceil(usuariosFiltrados.value.length / itemsPorPagina)
+);
+
+const usuariosPaginados = computed(() => {
+  const inicio = (paginaActual.value - 1) * itemsPorPagina;
+  return usuariosFiltrados.value.slice(inicio, inicio + itemsPorPagina);
+});
+
+const globalIndex = (localIndex) => {
+  return (paginaActual.value - 1) * itemsPorPagina + localIndex;
+};
 
 // Total de roturas
 const totalRoturas = computed(() => {
-  return usuariosConRoturas.value.reduce((sum, u) => sum + u.roturas, 0);
+  return usuariosConRoturas.value.reduce((sum, u) => sum + u.cantCelularesRotos, 0);
 });
 
 // Porcentaje de usuarios con roturas
 const porcentajeConRoturas = computed(() => {
-  if (todosUsuariosRotos.value.length === 0) return '0.0';
-  return ((usuariosConRoturas.value.length / todosUsuariosRotos.value.length) * 100).toFixed(1);
+  if (usuarios.value.length === 0) return '0.0';
+  return ((usuariosConRoturas.value.length / usuarios.value.length) * 100).toFixed(1);
 });
 
 // Promedio de roturas por usuario
@@ -300,25 +418,19 @@ const promedioRoturas = computed(() => {
 
 // Usuarios agrupados por región
 const regionesConUsuarios = computed(() => {
-  if (!todasRegiones.value) return [];
+  const mapa = {};
   
-  return todasRegiones.value
-    .map(region => {
-      const usuarios = [];
-      if (region.celularesRotosPorUsuario) {
-        Object.entries(region.celularesRotosPorUsuario).forEach(([nombre, roturas]) => {
-          if (roturas > 0) {
-            usuarios.push({ nombre, roturas });
-          }
-        });
-      }
-      
-      return {
-        nombre: region.region,
-        usuarios: usuarios.sort((a, b) => b.roturas - a.roturas)
-      };
-    })
-    .filter(region => region.usuarios.length > 0)
+  usuariosConRoturas.value.forEach(u => {
+    const region = u.region || 'SIN_REGION';
+    if (!mapa[region]) mapa[region] = [];
+    mapa[region].push(u);
+  });
+  
+  return Object.entries(mapa)
+    .map(([nombre, usrs]) => ({
+      nombre,
+      usuarios: usrs.sort((a, b) => b.cantCelularesRotos - a.cantCelularesRotos)
+    }))
     .sort((a, b) => b.usuarios.length - a.usuarios.length);
 });
 
@@ -334,7 +446,7 @@ const distribucionRoturas = computed(() => {
   ];
   
   usuariosConRoturas.value.forEach(usuario => {
-    const rango = rangos.find(r => usuario.roturas >= r.min && usuario.roturas <= r.max);
+    const rango = rangos.find(r => usuario.cantCelularesRotos >= r.min && usuario.cantCelularesRotos <= r.max);
     if (rango) rango.cantidad++;
   });
   
@@ -382,10 +494,10 @@ const cargarDatos = async () => {
   try {
     const username = localStorage.getItem('auth_username') || 'admin';
     const password = localStorage.getItem('auth_password') || 'admin123';
-    estadisticasService.setBasicAuth(username, password);
+    lineasService.setBasicAuth(username, password);
 
-    const response = await estadisticasService.obtenerEstadisticasTodasRegiones();
-    todasRegiones.value = response.data;
+    const response = await lineasService.obtenerUsuarios();
+    usuarios.value = response.data;
   } catch (err) {
     console.error('Error al cargar usuarios:', err);
     
@@ -407,24 +519,23 @@ onMounted(() => {
 
 // Export to Excel
 const exportarExcel = () => {
-  const hojaUsuarios = usuariosConRoturas.value.map(u => ({
-    Usuario: u.nombre,
-    Región: formatearRegion(u.region),
-    Roturas: u.roturas,
-  }));
-
-  const hojaTop20 = top20Usuarios.value.map((u, i) => ({
-    Ranking: i + 1,
-    Usuario: u.nombre,
-    Región: formatearRegion(u.region),
-    Roturas: u.roturas,
-  }));
+  const hojaUsuarios = usuariosConRoturas.value
+    .sort((a, b) => b.cantCelularesRotos - a.cantCelularesRotos)
+    .map(u => ({
+      Reparto: u.numReparto,
+      Región: formatearRegion(u.region),
+      Zona: u.zona,
+      Línea: u.numeroLinea || 'Sin línea',
+      Cargo: u.cargo,
+      Celular: `${u.marcaCelular} ${u.modeloCelular}`,
+      Serie: u.numeroSerieCelular,
+      Roturas: u.cantCelularesRotos,
+    }));
 
   exportToExcel({
     filename: `usuarios_${new Date().toISOString().slice(0,10)}.xlsx`,
     sheets: [
       { name: 'UsuariosConRoturas', data: hojaUsuarios },
-      { name: 'Top20Usuarios', data: hojaTop20 },
     ]
   });
 };
