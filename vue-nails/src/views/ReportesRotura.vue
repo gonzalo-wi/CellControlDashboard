@@ -416,7 +416,8 @@ const cargarDatos = async () => {
 
   try {
     const response = await lineasService.obtenerSolicitudes();
-    solicitudes.value = response.data || [];
+    const raw = response.data;
+    solicitudes.value = Array.isArray(raw) ? raw : (Array.isArray(raw?.content) ? raw.content : []);
   } catch (err) {
     console.error('Error al cargar solicitudes:', err);
     if (err.response?.status === 401) {

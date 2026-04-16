@@ -294,7 +294,8 @@ const cargarDatos = async () => {
     estadisticasService.setBasicAuth(username, password);
 
     const response = await estadisticasService.obtenerEstadisticasTodasRegiones();
-    todasRegiones.value = response.data;
+    const raw = response.data;
+    todasRegiones.value = Array.isArray(raw) ? raw : (Array.isArray(raw?.content) ? raw.content : []);
   } catch (err) {
     console.error('Error al cargar regiones:', err);
     

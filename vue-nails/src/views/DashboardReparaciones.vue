@@ -307,7 +307,8 @@ const cargarDatos = async () => {
 
   try {
     const response = await lineasService.obtenerMovimientos();
-    const data = response.data?.content || response.data || [];
+    const raw = response.data;
+    const data = Array.isArray(raw) ? raw : (Array.isArray(raw?.content) ? raw.content : []);
     devoluciones.value = data.filter(m => m.tipo === 'DEVOLUCION');
   } catch (err) {
     console.error('Error al cargar movimientos:', err);

@@ -332,7 +332,8 @@ const cargarDatos = async () => {
     lineasService.setBasicAuth(username, password);
 
     const response = await lineasService.obtenerUsuarios();
-    usuarios.value = response.data;
+    const raw = response.data;
+    usuarios.value = Array.isArray(raw) ? raw : (Array.isArray(raw?.content) ? raw.content : []);
   } catch (err) {
     console.error('Error al cargar usuarios:', err);
     

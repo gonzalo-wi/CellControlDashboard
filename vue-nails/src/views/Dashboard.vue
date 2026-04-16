@@ -475,12 +475,14 @@ const cargarDatos = async () => {
 
     // Cargar estadísticas de todas las regiones
     const responseRegiones = await estadisticasService.obtenerEstadisticasTodasRegiones();
-    todasRegiones.value = responseRegiones.data;
+    const rawRegiones = responseRegiones.data;
+    todasRegiones.value = Array.isArray(rawRegiones) ? rawRegiones : (Array.isArray(rawRegiones?.content) ? rawRegiones.content : []);
 
     // Cargar todos los celulares
     try {
       const responseCelulares = await estadisticasService.obtenerTodosCelulares();
-      todosCelulares.value = responseCelulares.data;
+      const rawCelulares = responseCelulares.data;
+      todosCelulares.value = Array.isArray(rawCelulares) ? rawCelulares : (Array.isArray(rawCelulares?.content) ? rawCelulares.content : []);
     } catch (celularesError) {
       console.warn('No se pudieron cargar los celulares:', celularesError);
       // No es crítico, continuamos
